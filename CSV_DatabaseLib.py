@@ -257,11 +257,12 @@ class ServerInterface:
     def executeRequest(self, dataBase: Database, jsonMsg: json):
 
         retMsgDict = {}
+        jsonDict = json.loads(jsonMsg)
 
-        match jsonMsg["Operation"]:
+        match jsonDict["Operation"]:
             case "Create":
-                status = dataBase.createTable(jsonMsg["TableName"],jsonMsg["ColumnNames"])
-                retMsgDict["Operation"] = jsonMsg["Operation"]
+                status = dataBase.createTable(jsonDict["TableName"],jsonDict["ColumnNames"])
+                retMsgDict["Operation"] = jsonDict["Operation"]
                 if (status == "Created"):
                     retMsgDict["Status"] = "200"
                 elif (status == "Already Exists"):
@@ -270,32 +271,32 @@ class ServerInterface:
                     retMsgDict["Status"] = "001"
             
             case "Insert":
-                status = dataBase.insertRow(jsonMsg["TableName"], jsonMsg["rowData"])
-                retMsgDict["Operation"] = jsonMsg["Operation"]
+                status = dataBase.insertRow(jsonDict["TableName"], jsonDict["rowData"])
+                retMsgDict["Operation"] = jsonDict["Operation"]
                 if (status):
                     retMsgDict["Status"] = "200"
                 else:
                     retMsgDict["Status"] = "002"
             
             case "UpdateByIndex":
-                status = dataBase.updateRowByIndex(jsonMsg["TableName"], jsonMsg["Index"], jsonMsg["rowData"])
-                retMsgDict["Operation"] = jsonMsg["Operation"]
+                status = dataBase.updateRowByIndex(jsonDict["TableName"], jsonDict["Index"], jsonDict["rowData"])
+                retMsgDict["Operation"] = jsonDict["Operation"]
                 if (status):
                     retMsgDict["Status"] = "200"
                 else:
                     retMsgDict["Status"] = "003"
             
             case "UpdateByKeyValue":
-                status = dataBase.updateRowByKeyValue(jsonMsg["TableName"], jsonMsg["Key"], jsonMsg["Equals"], jsonMsg["rowData"])
-                retMsgDict["Operation"] = jsonMsg["Operation"]
+                status = dataBase.updateRowByKeyValue(jsonDict["TableName"], jsonDict["Key"], jsonDict["Equals"], jsonMsg["rowData"])
+                retMsgDict["Operation"] = jsonDict["Operation"]
                 if (status):
                     retMsgDict["Status"] = "200"
                 else:
                     retMsgDict["Status"] = "004"
             
             case "GetRowByIndex":
-                rowData = dataBase.getRowByIndex(jsonMsg["TableName"], jsonMsg["Index"])
-                retMsgDict["Operation"] = jsonMsg["Operation"]
+                rowData = dataBase.getRowByIndex(jsonDict["TableName"], jsonDict["Index"])
+                retMsgDict["Operation"] = jsonDict["Operation"]
                 if (len(rowData) > 0):
                     retMsgDict["Status"] = "200"
                 else:
@@ -304,8 +305,8 @@ class ServerInterface:
                 retMsgDict["Data"] = rowData
             
             case "GetRowsByKeyValue":
-                rowData = dataBase.getRowsByKeyValue(jsonMsg["TableName"], jsonMsg["Key"], jsonMsg["Equals"])
-                retMsgDict["Operation"] = jsonMsg["Operation"]
+                rowData = dataBase.getRowsByKeyValue(jsonDict["TableName"], jsonDict["Key"], jsonDict["Equals"])
+                retMsgDict["Operation"] = jsonDict["Operation"]
                 if (len(rowData) > 0):
                     retMsgDict["Status"] = "200"
                 else:
@@ -314,23 +315,23 @@ class ServerInterface:
                 retMsgDict["Data"] = rowData
             
             case "DeleteRowByIndex":
-                status = dataBase.deleteRowByIndex(jsonMsg["TableName"], jsonMsg["Index"])
-                retMsgDict["Operation"] = jsonMsg["Operation"]
+                status = dataBase.deleteRowByIndex(jsonDict["TableName"], jsonDict["Index"])
+                retMsgDict["Operation"] = jsonDict["Operation"]
                 if (status):
                     retMsgDict["Status"] = "200"
                 else:
                     retMsgDict["Status"] = "007"
             
             case "DeleteRowsByKeyValue":
-                status = dataBase.deleteRowsByKeyValue(jsonMsg["TableName"], jsonMsg["Key"], jsonMsg["Equals"])
-                retMsgDict["Operation"] = jsonMsg["Operation"]
+                status = dataBase.deleteRowsByKeyValue(jsonDict["TableName"], jsonDict["Key"], jsonDict["Equals"])
+                retMsgDict["Operation"] = jsonDict["Operation"]
                 if (status):
                     retMsgDict["Status"] = "200"
                 else:
                     retMsgDict["Status"] = "008"
             
             case default:
-                retMsgDict["Operation"] = jsonMsg["Operation"]
+                retMsgDict["Operation"] = jsonDict["Operation"]
                 retMsgDict["Status"] = "000"
 
         return retMsgDict
