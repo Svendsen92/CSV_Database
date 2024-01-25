@@ -30,10 +30,10 @@ def main():
         interface.createSocket()
 
         # Receive data when client connects to socket
-        jsonMsg = interface.receiveRequest()
+        jsonDict = interface.receiveRequest()
 
         # Decode Json message and execute Database commands
-        msgDict = interface.executeRequest(dataBase=database, jsonMsg=jsonMsg)
+        msgDict = interface.executeRequest(dataBase=database, jsonDict=jsonDict)
 
         # Send Json message return with Status and Data : retMsg = '{ "Operation":string,"Status":int, "data":List }'
         interface.sendRequestData(msgDict)
