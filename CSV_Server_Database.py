@@ -33,7 +33,7 @@ def main():
         jsonMsg = interface.receiveRequest()
 
         # Decode Json message and execute Database commands
-        msgDict = interface.executeRequest(dataBase=database, json=jsonMsg)
+        msgDict = interface.executeRequest(dataBase=database, jsonMsg=jsonMsg)
 
         # Send Json message return with Status and Data : retMsg = '{ "Operation":string,"Status":int, "data":List }'
         interface.sendRequestData(msgDict)

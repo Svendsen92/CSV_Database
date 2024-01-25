@@ -30,20 +30,20 @@ def main():
         return 0
 
     data = []
-    iterationMax = 1000
+    iterationMax = 100
     for i in range(1,iterationMax,1):
     
-        #data = ['data' + str(i),'data' + str(i+1),'data' + str(i+2),'data' + str(i+3)]
-        #msgJson = interface.InsertRow(tableName=tableName,rowData=data)
+        data = ['data' + str(i),'data' + str(i+1),'data' + str(i+2),'data' + str(i+3)]
+        msgJson = interface.InsertRow(tableName=tableName,rowData=data)
 
-        msgJson = interface.GetRowByIndex(tableName=tableName, index=i)
-        data.append(msgJson['Data'])
+        #msgJson = interface.GetRowByIndex(tableName=tableName, index=i)
+        #data.append(msgJson['Data'])
 
 
     endTime = round(time.time() * 1000)
     print("Total time[s] = " + str((endTime - startTime) / 1000))
     print("Time/operation[ms] = " + str(((endTime - startTime) / iterationMax)))
 
-    print("data[99]: " + str(data[999]))
+    #print("data[99]: " + str(data[999]))
 
 main()
