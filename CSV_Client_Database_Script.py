@@ -3,6 +3,8 @@ import socket
 import time
 import sys
 
+import ipaddress
+
 '''
 reqCreateMsgJson = '{ "Operation":"Create", "TableName":"test13", "ColumnNames":["col1","col2","col3","col4"] }'
 reqInsertMsgJson = '{ "Operation":"Insert", "TableName":"test13", "rowData":["col1_Data1", "col2_Data2", "col3_Data3","col4_Data4"]}'
@@ -14,21 +16,45 @@ reqDeleteRowByIndexMsgJson = '{ "Operation":"DeleteRowByIndex", "TableName":"tes
 reqDeleteRowsByKeyValueMsgJson = '{ "Operation":"DeleteRowByKeyValue", "TableName":"test1", "Key":"key", "Equals":"equals"}'
 '''
 
+def getIpFromDeviceName(ipAddr: str, searchRange: range) -> str:
+    remoteDeviceIP = ""
+    for i in range(1,256):
+        try:
+            ipStr = "192.168.0." + str(i)
+            print(ipStr)
+            net4 = ipaddress.ip_network(ipStr)
+            hostname = socket.gethostbyaddr(str(net4.hosts()[0]))[0]
+            print(hostname)
+            if (hostname == "raspberrypi"):
+                remoteDeviceIP = str(net4.hosts()[0])
+                print(remoteDeviceIP)
+                break
+        except:
+            pass
+    return remoteDeviceIP
 
 def main():
 
     # Get program arguments
-    ip = str(sys.argv[1])
-    port = int(sys.argv[2])
+    try:
+        port = int(sys.argv[1])
+    except:
+        port = 12345
+        print("Invalid PORT number provided in program arguments")
+        print("Default PORT = " + str(port))
+    try:
+        ip = str(sys.argv[2])
+    except:
+        #ip = getIpFromDeviceName("192.168.0", (1,255))
+        ip = "192.168.0.57"
+
     print("IP = " + ip)
     print("PORT = " + str(port))
-
-    print("hopfull socket: " + socket.gethostbyname('raspberrypi'))
 
     # Create interface object
     interface = ClientInterface(ip=ip, port=port)
 
-    tableName = "test20"
+    tableName = "testDeleteMe"
     colunmNames = ["Col1", "col2", "col3", "col4"]
     msgJson = interface.createTable(tableName=tableName, columnNames=colunmNames)
     

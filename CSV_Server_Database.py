@@ -1,11 +1,10 @@
-import atexit
 import pathlib
+import socket
 import time
 import sys
 from CSV_DatabaseLib import Database
 from CSV_DatabaseLib import ServerInterface
 
-import socket
 
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -19,24 +18,21 @@ def get_local_ip():
         s.close()
     return IP
 
+
+
 def main():
 
-    ## getting the hostname by socket.gethostname() method
-    hostname = socket.gethostname()
-    ## getting the IP address using socket.gethostbyname() method
-    #ip = socket.gethostbyname(hostname)
-    ip = get_local_ip()
-    ## printing the hostname and ip_address
-
     try:
+        # Get program argument for PORT number
         port = int(sys.argv[1])
     except:
-        print("Please provide PORT parameter ex. 12345")
-        #exit
         port = 12345
-    
-    print("IP = " + ip)
-    print("PORT = " + str(port))
+        print("Default PORT parameter has been used : " + str(port))
+    finally:
+        # Get local lan IP
+        ip = get_local_ip()
+        print("IP = " + ip)
+        print("PORT = " + str(port))
     
     # Create interface object
     interface = ServerInterface(ip=ip, port=port)
