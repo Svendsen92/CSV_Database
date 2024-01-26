@@ -269,24 +269,26 @@ class ServerInterface:
     def executeRequest(self, dataBase: Database, jsonDict: dict):
 
         retMsgDict = {}
+        print(type(jsonDict))
+        print("jsonDict: " + str(jsonDict))
 
-        if (jsonDict["Operation"] == "Create"):
-            status = dataBase.createTable(jsonDict["TableName"],jsonDict["ColumnNames"])
-            retMsgDict["Operation"] = jsonDict["Operation"]
+        if (jsonDict['Operation'] == "Create"):
+            status = dataBase.createTable(jsonDict['TableName'],jsonDict['ColumnNames'])
+            retMsgDict['Operation'] = jsonDict['Operation']
             if (status == "Created"):
-                retMsgDict["Status"] = "200"
+                retMsgDict['Status'] = "200"
             elif (status == "Already Exists"):
-                retMsgDict["Status"] = "201"
+                retMsgDict['Status'] = "201"
             else:
-                retMsgDict["Status"] = "001"
+                retMsgDict['Status'] = "001"
             
-        elif (jsonDict["Operation"] == "Insert"):
-            status = dataBase.insertRow(jsonDict["TableName"], jsonDict["rowData"])
-            retMsgDict["Operation"] = jsonDict["Operation"]
+        elif (jsonDict['Operation'] == "Insert"):
+            status = dataBase.insertRow(jsonDict['TableName'], jsonDict['rowData'])
+            retMsgDict['Operation'] = jsonDict['Operation']
             if (status):
-                retMsgDict["Status"] = "200"
+                retMsgDict['Status'] = "200"
             else:
-                retMsgDict["Status"] = "002"
+                retMsgDict['Status'] = "002"
             
         elif (jsonDict["Operation"] == "UpdateByIndex"):
             status = dataBase.updateRowByIndex(jsonDict["TableName"], jsonDict["Index"], jsonDict["rowData"])
