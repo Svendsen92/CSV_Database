@@ -1,4 +1,5 @@
 import pathlib
+import sys
 from CSV_DatabaseLib import Database
 from CSV_DatabaseLib import ServerInterface
 
@@ -11,7 +12,7 @@ def main():
     database = Database(filePath=filePath) 
 
     # Create interface object
-    interface = ServerInterface("127,0,0,1", 12345)
+    interface = ServerInterface("127.0.0.1", 12345)
     
     while (True):
     
@@ -32,9 +33,11 @@ def main():
         # Receive data when client connects to socket
         jsonDict = interface.receiveRequest()
 
-        # Decode Json message and execute Database commands
-        msgDict = interface.executeRequest(dataBase=database, jsonDict=jsonDict)
-
+        if (len(jsonDict) > 0):
+            # Decode Json message and execute Database commands
+            msgDict = interface.executeRequest(dataBase=database, jsonDict=jsonDict)
+        else:
+            msgDict = {"Operation":"Socket Failed","Status":0}
         # Send Json message return with Status and Data : retMsg = '{ "Operation":string,"Status":int, "data":List }'
         interface.sendRequestData(msgDict)
         
