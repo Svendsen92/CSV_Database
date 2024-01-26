@@ -238,7 +238,7 @@ class ServerInterface:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         
         try:
-            s.bind(('', self.PORT))
+            s.bind((self.IP, self.PORT))
             # put the socket into listening mode 
             s.listen(5)
             #print ("socket is listening")
