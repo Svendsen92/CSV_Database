@@ -234,17 +234,23 @@ class ServerInterface:
         self.PORT = port
         self.Connection = socket 
 
-    def createSocket(self):
+    def createSocket(self) -> bool:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         s.bind(('', self.PORT))
         
-        # put the socket into listening mode 
-        s.listen(5)
-        #print ("socket is listening")
-        
-        # Establish connection with client. 
-        c, addr = s.accept()
-        self.Connection = c
+        try:
+            # put the socket into listening mode 
+            s.listen(5)
+            #print ("socket is listening")
+            
+            # Establish connection with client. 
+            c, addr = s.accept()
+            self.Connection = c
+            return True
+        except Exception as error:
+            print("ServerInterface.createSocket() : Failed")
+            print("Error : " + error)
+            return False
 
     def receiveRequest(self):
         
@@ -348,22 +354,28 @@ class ClientInterface:
         self.IP = ip
         self.PORT = port
 
-    def sendRequest(self, msgJson: dict):
+    def sendRequest(self, msgJson: dict) -> dict:
         # Create a socket object 
         s = socket.socket()                      
         
-        # connect to the server on local computer 
-        s.connect((self.IP, self.PORT)) 
-        
-        # send data after it is converted from dict to json string
-        s.send( json.dumps(msgJson).encode() )
-        
-        # receive data from the server and decoding to get the string.
-        msgJson = json.loads( s.recv(1024).decode() )
+        try:
+            # connect to the server on local computer 
+            s.connect((self.IP, self.PORT)) 
+            
+            # send data after it is converted from dict to json string
+            s.send( json.dumps(msgJson).encode() )
+            
+            # receive data from the server and decoding to get the string.
+            msgJson = json.loads( s.recv(1024).decode() )
 
-        # close the connection 
-        s.close()     
-        return msgJson
+            # close the connection 
+            s.close()     
+            return msgJson
+        
+        except Exception as error:
+            print("ClientInterface.sendRequest() : Failed")
+            print("Error : " + error)
+            return []
 
     def createTable(self, tableName: str, columnNames: list):
         jsonDict = {}
