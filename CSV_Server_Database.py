@@ -1,3 +1,4 @@
+import atexit
 import pathlib
 import time
 from CSV_DatabaseLib import Database
@@ -14,6 +15,8 @@ def main():
     # Create interface object
     interface = ServerInterface("127.0.0.1", 12345)
     
+    atexit.register(interface.Connection.close())
+
     while (True):
     
         ''' Request message examples

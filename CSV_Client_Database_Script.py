@@ -1,5 +1,5 @@
 from CSV_DatabaseLib import ClientInterface
-
+import atexit
 import time
 
 '''
@@ -18,6 +18,7 @@ def main():
     port = 12345
     ip = '127.0.0.1'
     interface = ClientInterface(ip=ip, port=port)
+    atexit.register(interface.Connection.close())
 
     tableName = "test20"
     colunmNames = ["Col1", "col2", "col3", "col4"]
