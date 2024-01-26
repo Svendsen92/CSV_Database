@@ -244,9 +244,9 @@ class ServerInterface:
             #print ("socket is listening")
             
             # Establish connection with client. 
-            c, addr = s.accept()
-            self.Connection = c
+            self.Connection, addr = s.accept()
             return True
+        
         except Exception as error:
             print("ServerInterface.createSocket() : Failed")
             print("Error : " + str(error))
