@@ -387,6 +387,7 @@ class ClientInterface:
         except Exception as error:
             print("ClientInterface.sendRequest() : Failed")
             print("Error : " + str(error))
+            s.close()
             return []
 
     def createTable(self, tableName: str, columnNames: list):
