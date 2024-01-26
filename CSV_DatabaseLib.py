@@ -236,7 +236,7 @@ class ServerInterface:
 
     def createSocket(self) -> bool:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-        
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         try:
             s.bind((self.IP, self.PORT))
             # put the socket into listening mode 
