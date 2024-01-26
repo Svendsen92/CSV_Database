@@ -236,9 +236,9 @@ class ServerInterface:
 
     def createSocket(self) -> bool:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
-        s.bind(('', self.PORT))
         
         try:
+            s.bind(('', self.PORT))
             # put the socket into listening mode 
             s.listen(5)
             #print ("socket is listening")
@@ -249,7 +249,7 @@ class ServerInterface:
             return True
         except Exception as error:
             print("ServerInterface.createSocket() : Failed")
-            print("Error : " + error)
+            print("Error : " + str(error))
             return False
 
     def receiveRequest(self):
@@ -374,7 +374,7 @@ class ClientInterface:
         
         except Exception as error:
             print("ClientInterface.sendRequest() : Failed")
-            print("Error : " + error)
+            print("Error : " + str(error))
             return []
 
     def createTable(self, tableName: str, columnNames: list):
