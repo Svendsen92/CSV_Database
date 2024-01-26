@@ -14,8 +14,6 @@ def main():
 
     # Create interface object
     interface = ServerInterface("127.0.0.2", 12345)
-    
-    atexit.register(interface.Connection.close())
 
     while (True):
     
@@ -34,6 +32,9 @@ def main():
         isConnected = interface.createSocket()
 
         if (isConnected):
+            # ensure socket is closed on forced program termination
+            atexit.register(interface.Connection.close())
+
             # Receive data when client connects to socket
             jsonDict = interface.receiveRequest()
 
