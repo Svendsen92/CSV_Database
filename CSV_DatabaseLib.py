@@ -252,7 +252,7 @@ class ServerInterface:
             print("Error : " + str(error))
             return False
 
-    def receiveRequest(self):
+    def receiveRequest(self) -> dict:
         
         try:
             msg = self.Connection.recv(1024).decode()
@@ -263,7 +263,7 @@ class ServerInterface:
         except Exception as error:
             print("ServerInterface.receiveRequest() : Failed")
             print("Error : " + str(error))
-            return []
+            return {}
         
 
     def executeRequest(self, dataBase: Database, jsonDict: dict):
