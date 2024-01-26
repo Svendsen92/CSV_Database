@@ -254,11 +254,17 @@ class ServerInterface:
 
     def receiveRequest(self):
         
-        msg = self.Connection.recv(1024).decode()
-        #print(msg)
-        jsonDict = json.loads(msg)
+        try:
+            msg = self.Connection.recv(1024).decode()
+            jsonDict = json.loads(msg)
 
-        return jsonDict
+            return jsonDict
+        
+        except Exception as error:
+            print("ServerInterface.receiveRequest() : Failed")
+            print("Error : " + str(error))
+            return []
+        
 
     def executeRequest(self, dataBase: Database, jsonDict: dict):
 
