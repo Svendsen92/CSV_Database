@@ -5,16 +5,18 @@ import sys
 from CSV_DatabaseLib import Database
 from CSV_DatabaseLib import ServerInterface
 
+import socket
+
 def main():
-    # Get program arguments
+
+    ## getting the hostname by socket.gethostname() method
+    hostname = socket.gethostname()
+    ## getting the IP address using socket.gethostbyname() method
+    ip = socket.gethostbyname(hostname)
+    ## printing the hostname and ip_address
+
     try:
-        ip = str(sys.argv[1])
-    except:
-        print("Please provide IP parameter ex. 127.0.0.1")
-        #exit
-        ip = "127.0.0.1"
-    try:
-        port = int(sys.argv[2])
+        port = int(sys.argv[1])
     except:
         print("Please provide PORT parameter ex. 12345")
         #exit
@@ -24,7 +26,7 @@ def main():
     print("PORT = " + str(port))
     
     # Create interface object
-    interface = ServerInterface("127.0.0.2", 12345)
+    interface = ServerInterface(ip, 12345)
 
     # Get path to current file's directory
     filePath = str(pathlib.Path(__file__).parent.resolve()) + "\\"
