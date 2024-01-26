@@ -15,9 +15,7 @@ reqDeleteRowsByKeyValueMsgJson = '{ "Operation":"DeleteRowByKeyValue", "TableNam
 
 
 def main():
-    port = 12345
-    ip = '127.0.0.1'
-    interface = ClientInterface(ip=ip, port=port)
+    interface = ClientInterface(ip='127.0.0.2', port=12345)
     atexit.register(interface.Connection.close())
 
     tableName = "test20"

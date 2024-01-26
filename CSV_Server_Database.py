@@ -13,7 +13,7 @@ def main():
     database = Database(filePath=filePath) 
 
     # Create interface object
-    interface = ServerInterface("127.0.0.1", 12345)
+    interface = ServerInterface("127.0.0.2", 12345)
     
     atexit.register(interface.Connection.close())
 
