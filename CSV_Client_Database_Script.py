@@ -16,12 +16,14 @@ reqDeleteRowsByKeyValueMsgJson = '{ "Operation":"DeleteRowByKeyValue", "TableNam
 
 def main():
     interface = ClientInterface(ip='127.0.0.2', port=12345)
-    atexit.register(interface.Connection.close())
 
     tableName = "test20"
     colunmNames = ["Col1", "col2", "col3", "col4"]
     msgJson = interface.createTable(tableName=tableName, columnNames=colunmNames)
 
+    # ensure socket is closed on forced program termination
+    atexit.register(interface.Connection.close())
+    
     startTime = round(time.time() * 1000)
 
     if (msgJson['Status'] == '001'):
