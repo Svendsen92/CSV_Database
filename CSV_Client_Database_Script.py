@@ -1,5 +1,5 @@
 from CSV_DatabaseLib import ClientInterface
-import atexit
+import socket
 import time
 import sys
 
@@ -22,6 +22,8 @@ def main():
     port = int(sys.argv[2])
     print("IP = " + ip)
     print("PORT = " + str(port))
+
+    print("hopfull socket: " + socket.gethostbyname('raspberrypi'))
 
     # Create interface object
     interface = ClientInterface(ip=ip, port=port)

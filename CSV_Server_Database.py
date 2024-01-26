@@ -15,6 +15,8 @@ def main():
     ip = socket.gethostbyname(hostname)
     ## printing the hostname and ip_address
 
+    print("hostname: " + hostname)
+
     try:
         port = int(sys.argv[1])
     except:

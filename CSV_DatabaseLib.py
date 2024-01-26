@@ -269,9 +269,6 @@ class ServerInterface:
     def executeRequest(self, dataBase: Database, jsonDict: dict):
 
         retMsgDict = {}
-        print(type(jsonDict))
-        print("jsonDict: " + str(jsonDict))
-
         if (jsonDict['Operation'] == "Create"):
             status = dataBase.createTable(jsonDict['TableName'],jsonDict['ColumnNames'])
             retMsgDict['Operation'] = jsonDict['Operation']
