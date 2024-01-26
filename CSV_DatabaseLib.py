@@ -381,14 +381,16 @@ class ClientInterface:
             msgJson = json.loads( s.recv(1024).decode() )
 
             # close the connection 
-            s.close()     
+            s.close()
+            msgJson['Status'] = "OK"
             return msgJson
         
         except Exception as error:
             print("ClientInterface.sendRequest() : Failed")
             print("Error : " + str(error))
             s.close()
-            return []
+            msgJson['Status'] = "Error"
+            return msgJson
 
     def createTable(self, tableName: str, columnNames: list):
         jsonDict = {}

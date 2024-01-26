@@ -32,7 +32,7 @@ def main():
     
     startTime = round(time.time() * 1000)
 
-    if (msgJson['Status'] == '001'):
+    if (msgJson['Status'] != 'OK'):
         print("Database table could not be created")
         return 0
 
