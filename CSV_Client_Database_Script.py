@@ -1,6 +1,7 @@
 from CSV_DatabaseLib import ClientInterface
 import atexit
 import time
+import sys
 
 '''
 reqCreateMsgJson = '{ "Operation":"Create", "TableName":"test13", "ColumnNames":["col1","col2","col3","col4"] }'
@@ -15,7 +16,15 @@ reqDeleteRowsByKeyValueMsgJson = '{ "Operation":"DeleteRowByKeyValue", "TableNam
 
 
 def main():
-    interface = ClientInterface(ip='127.0.0.2', port=12345)
+
+    # Get program arguments
+    ip = str(sys.argv[1])
+    port = int(sys.argv[2])
+    print("IP = " + ip)
+    print("PORT = " + str(port))
+
+    # Create interface object
+    interface = ClientInterface(ip=ip, port=port)
 
     tableName = "test20"
     colunmNames = ["Col1", "col2", "col3", "col4"]

@@ -1,19 +1,25 @@
 import atexit
 import pathlib
 import time
+import sys
 from CSV_DatabaseLib import Database
 from CSV_DatabaseLib import ServerInterface
 
 def main():
+    # Get program arguments
+    ip = str(sys.argv[1])
+    port = int(sys.argv[2])
+    print("IP = " + ip)
+    print("PORT = " + str(port))
+    
+    # Create interface object
+    interface = ServerInterface("127.0.0.2", 12345)
 
     # Get path to current file's directory
     filePath = str(pathlib.Path(__file__).parent.resolve()) + "\\"
 
     # Create database object
     database = Database(filePath=filePath) 
-
-    # Create interface object
-    interface = ServerInterface("127.0.0.2", 12345)
 
     while (True):
     
