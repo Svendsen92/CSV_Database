@@ -7,8 +7,19 @@ from CSV_DatabaseLib import ServerInterface
 
 def main():
     # Get program arguments
-    ip = str(sys.argv[1])
-    port = int(sys.argv[2])
+    try:
+        ip = str(sys.argv[1])
+    except:
+        print("Please provide IP parameter ex. 127.0.0.1")
+        #exit
+        ip = "127.0.0.1"
+    try:
+        port = int(sys.argv[2])
+    except:
+        print("Please provide PORT parameter ex. 12345")
+        #exit
+        port = 12345
+    
     print("IP = " + ip)
     print("PORT = " + str(port))
     
@@ -38,9 +49,6 @@ def main():
         isConnected = interface.createSocket()
 
         if (isConnected):
-            # ensure socket is closed on forced program termination
-            atexit.register(interface.Connection.close())
-
             # Receive data when client connects to socket
             jsonDict = interface.receiveRequest()
 

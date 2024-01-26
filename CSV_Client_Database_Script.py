@@ -29,9 +29,6 @@ def main():
     tableName = "test20"
     colunmNames = ["Col1", "col2", "col3", "col4"]
     msgJson = interface.createTable(tableName=tableName, columnNames=colunmNames)
-
-    # ensure socket is closed on forced program termination
-    atexit.register(interface.Connection.close())
     
     startTime = round(time.time() * 1000)
 
