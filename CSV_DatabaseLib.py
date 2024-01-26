@@ -348,12 +348,16 @@ class ServerInterface:
 
     def sendRequestData(self, responceJson: dict):
 
-        # send a thank you message to the client. encoding to send byte type. 
-        jsonStr = json.dumps(responceJson)
-        self.Connection.send(jsonStr.encode()) 
-            
-        # Close the connection with the client 
-        self.Connection.close()
+        try:
+            # send a thank you message to the client. encoding to send byte type. 
+            jsonStr = json.dumps(responceJson)
+            self.Connection.send(jsonStr.encode()) 
+                
+            # Close the connection with the client 
+            self.Connection.close()
+        except Exception as error:
+            print("ServerInterface.sendRequestData() : Failed")
+            print("Error : " + str(error))
 
 
 
