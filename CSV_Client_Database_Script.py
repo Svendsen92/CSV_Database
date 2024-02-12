@@ -1,9 +1,10 @@
 from CSV_DatabaseLib import ClientInterface
+import ipaddress
 import socket
 import time
 import sys
 
-import ipaddress
+
 
 '''
 reqCreateMsgJson = '{ "Operation":"Create", "TableName":"test13", "ColumnNames":["col1","col2","col3","col4"] }'
@@ -16,16 +17,16 @@ reqDeleteRowByIndexMsgJson = '{ "Operation":"DeleteRowByIndex", "TableName":"tes
 reqDeleteRowsByKeyValueMsgJson = '{ "Operation":"DeleteRowByKeyValue", "TableName":"test1", "Key":"key", "Equals":"equals"}'
 '''
 
-def getIpFromDeviceName(ipAddr: str, searchRange: range) -> str:
+def getIpFromDeviceName(deviceName: str, networkAddr: str, searchRange: range) -> str:
     remoteDeviceIP = ""
-    for i in range(1,256):
+    for i in range(searchRange.start, searchRange.stop):
         try:
-            ipStr = "192.168.0." + str(i)
+            ipStr = ipAddr + str(i)
             print(ipStr)
             net4 = ipaddress.ip_network(ipStr)
             hostname = socket.gethostbyaddr(str(net4.hosts()[0]))[0]
             print(hostname)
-            if (hostname == "raspberrypi"):
+            if (hostname.find(deviceName) >= 0):
                 remoteDeviceIP = str(net4.hosts()[0])
                 print(remoteDeviceIP)
                 break
@@ -45,8 +46,9 @@ def main():
     try:
         ip = str(sys.argv[2])
     except:
-        #ip = getIpFromDeviceName("192.168.0", (1,255))
-        ip = "192.168.0.57"
+        ip = getIpFromDeviceName(deviceName="raspberrypi" ,networkAddr="192.168.0.", searchRange=range(0,255))
+        #ip = "192.168.0.56"
+        #ip = "127.0.0.1"
 
     print("IP = " + ip)
     print("PORT = " + str(port))
@@ -54,31 +56,43 @@ def main():
     # Create interface object
     interface = ClientInterface(ip=ip, port=port)
 
-    tableName = "testDeleteMe"
+    tableName = "test20"
     colunmNames = ["Col1", "col2", "col3", "col4"]
     msgJson = interface.createTable(tableName=tableName, columnNames=colunmNames)
     
     startTime = round(time.time() * 1000)
 
-    if (msgJson['Status'] != 'OK'):
+    if (msgJson['Status'] == '200'):
+        print("Database table has been created")
+    elif (msgJson['Status'] == '201'):
+        print("Database table already exists")
+    else:
         print("Database table could not be created")
         return 0
 
-    data = []
-    iterationMax = 100
-    for i in range(1,iterationMax,1):
-    
-        data = ['data' + str(i),'data' + str(i+1),'data' + str(i+2),'data' + str(i+3)]
-        msgJson = interface.InsertRow(tableName=tableName,rowData=data)
+    msgJson = interface.getTableSize(tableName)
+    print("#Rows:" + str(msgJson['Data'][0]) + ", " + "#Cols:" + str(msgJson['Data'][1]))
 
-        #msgJson = interface.GetRowByIndex(tableName=tableName, index=i)
-        #data.append(msgJson['Data'])
+    data = []
+    msgJson.clear()
+    iterationMax = 10
+    for i in range(1,iterationMax,1):
+        #data = ['data' + str(i),'data' + str(i+1),'data' + str(i+2),'data' + str(i+3)]
+        #msgJson = interface.InsertRow(tableName=tableName,rowData=data)
+
+        msgJson = interface.GetRowByIndex(tableName=tableName, index=i)
+        if (msgJson["Status"] == '200'):
+            data.append(msgJson['Data'])
+            print("data: " + str(msgJson['Data']))
+        else:
+            break
 
 
     endTime = round(time.time() * 1000)
     print("Total time[s] = " + str((endTime - startTime) / 1000))
     print("Time/operation[ms] = " + str(((endTime - startTime) / iterationMax)))
 
-    #print("data[99]: " + str(data[999]))
+    print("len(data): " + str(len(data)))
+    
 
 main()
