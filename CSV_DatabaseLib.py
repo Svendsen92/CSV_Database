@@ -33,14 +33,29 @@ class Database:
             csvfile.close()
         return rows
 
-    def getColumnNames(self, tableName: str):
+    def getTableSize(self, tableName: str) -> list:
+        
+        tableSize = [0,0]
+        if (len(tableName) > 0):
+            if (tableName != self.currentTableName):
+                self.currentTableData = self.readCsvFile(tableName=tableName)
+
+            tableSize[0] = len(self.currentTableData) -1
+            tableSize[1] = len(self.currentTableData[0])
+
+            return ["OK" ,tableSize]        
+        return ["Invalid tableName", tableSize]
+    
+    def getColumnNames(self, tableName: str) -> list:
         
         if (len(tableName) > 0):
-            tmp_rowData = self.readCsvFile(tableName=tableName)
-            return tmp_rowData[0]        
-        return ['']
+            if (tableName != self.currentTableName):
+                self.currentTableData = self.readCsvFile(tableName=tableName)
 
-    def createTable(self, tableName: str, columnNames: List[str]):
+            return ["OK" ,self.currentTableData[0]]        
+        return ["Invalid tableName",['']]
+
+    def createTable(self, tableName: str, columnNames: List[str]) -> str:
 
         fileName = tableName + ".csv"
         path = Path(self.filePath + fileName)
@@ -59,7 +74,7 @@ class Database:
             self.currentTableData = self.readCsvFile(tableName=tableName)
             return "Created"
 
-    def insertRow(self, tableName: str, rowData: List[str]):
+    def insertRow(self, tableName: str, rowData: List[str]) -> str:
 
         fileName = tableName + ".csv"
         path = Path(self.filePath + fileName)
@@ -70,16 +85,14 @@ class Database:
         elif (not path.is_file()):
             return "Does Not Exists"
         else:
-
             if (tableName != self.currentTableName):
                 self.currentTableData = self.readCsvFile(tableName=tableName)
             
             self.currentTableData.append(rowData)
             threading.Thread(target=self.writeCsvFile(fileName=fileName, rowData=self.currentTableData))
-
             return "Inserted"
 
-    def updateRowByIndex(self, tableName: str, rowNumber: int, rowData: List[str]):
+    def updateRowByIndex(self, tableName: str, rowNumber: int, rowData: List[str]) -> str:
 
         fileName = tableName + ".csv"
         path = Path(self.filePath + fileName)
@@ -94,16 +107,15 @@ class Database:
             if (tableName != self.currentTableName):
                 self.currentTableData = self.readCsvFile(tableName=tableName)
 
-            if (len(self.currentTableData) > rowNumber -1):
+            if (len(self.currentTableData)-1 > rowNumber):
                 
                 self.currentTableData[rowNumber] = rowData
                 threading.Thread(target=self.writeCsvFile(fileName=fileName, rowData=self.currentTableData))
-
                 return "Updated"
             else:
                 return "No Rows present"  
 
-    def updateRowByKeyValue(self, tableName: str, key: str, equals: str, rowData: List[str]):
+    def updateRowByKeyValue(self, tableName: str, key: str, equals: str, rowData: List[str]) -> str:
         
         fileName = tableName + ".csv"
         path = Path(self.filePath + fileName)
@@ -126,41 +138,39 @@ class Database:
                     row = rowData
 
             threading.Thread(target=self.writeCsvFile(fileName=fileName, rowData=self.currentTableData))
-
             return "Updated" 
 
-    def getRowByIndex(self, tableName: str, rowNumber: int):
+    def getRowByIndex(self, tableName: str, rowNumber: int) -> list:
 
         fileName = tableName + ".csv"
         path = Path(self.filePath + fileName)
         if (len(tableName) <= 0):
-            return "No Tablename" 
+            return ["No Tablename", ['']] 
         elif (rowNumber <= 0):
-            return "Invalid key"
+            return ["Invalid key", ['']]
         elif (not path.is_file()):
-            return "Does Not Exists"
+            return ["Does Not Exists", ['']]
         else:
-
             if (tableName != self.currentTableName):
                 self.currentTableData = self.readCsvFile(tableName=tableName)
-
-            if (len(self.currentTableData) >= rowNumber -1):
-                return self.currentTableData[rowNumber]
-            
-        return ['']    
+                
+            if (len(self.currentTableData)-1 >= rowNumber):
+                return ['OK' ,self.currentTableData[rowNumber]]
+            else:
+                return ['rowNumber > tableIdx', ['']]    
     
-    def getRowsByKeyValue(self, tableName: str, key: str, equals: str):
+    def getRowsByKeyValue(self, tableName: str, key: str, equals: str) -> list:
         
         fileName = tableName + ".csv"
         path = Path(self.filePath + fileName)
         if (len(tableName) <= 0):
-            return "No Tablename" 
+            return ["No Tablename", ['']] 
         elif (len(key) <= 0):
-            return "Invalid key"
+            return ["Invalid key", ['']]
         elif (len(equals) <= 0):
-            return "Invalid equals"
+            return ["Invalid equals", ['']]
         elif (not path.is_file()):
-            return "Does Not Exists"
+            return ["Does Not Exists", ['']]
         else:
 
             if (tableName != self.currentTableName):
@@ -174,9 +184,9 @@ class Database:
                 if (row[columnIndex] == equals):
                     retData.append(row)
 
-            return retData   
+            return ["OK", retData]   
 
-    def deleteRowByIndex(self, tableName: str, rowNumber: int):
+    def deleteRowByIndex(self, tableName: str, rowNumber: int) -> str:
 
         fileName = tableName + ".csv"
         path = Path(self.filePath + fileName)
@@ -191,15 +201,16 @@ class Database:
             if (tableName != self.currentTableName):
                 self.currentTableData = self.readCsvFile(tableName=tableName)
 
-            if (len(self.currentTableData) >= rowNumber -1):
+            if (len(self.currentTableData) -1 >= rowNumber):
                 del self.currentTableData[rowNumber]
 
                 fileName = tableName + ".csv"
                 threading.Thread(target=self.writeCsvFile(fileName=fileName, rowData=self.currentTableData))
-
                 return "Deleted"  
+            else:
+                return "rowNumber > tableIdx"
 
-    def deleteRowsByKeyValue(self, tableName: str, key: str, equals: str):
+    def deleteRowsByKeyValue(self, tableName: str, key: str, equals: str) -> str:
         
         fileName = tableName + ".csv"
         path = Path(self.filePath + fileName)
@@ -256,6 +267,7 @@ class ServerInterface:
         
         try:
             msg = self.Connection.recv(1024).decode()
+            print("receiveRequest() -> msg = " + msg)
             jsonDict = json.loads(msg)
 
             return jsonDict
@@ -263,8 +275,7 @@ class ServerInterface:
         except Exception as error:
             print("ServerInterface.receiveRequest() : Failed")
             print("Error : " + str(error))
-            return {}
-        
+            return {}   
 
     def executeRequest(self, dataBase: Database, jsonDict: dict):
 
@@ -278,14 +289,32 @@ class ServerInterface:
                 retMsgDict['Status'] = "201"
             else:
                 retMsgDict['Status'] = "001"
-            
+
+        elif (jsonDict['Operation'] == "GetColumnNames"):
+            status, rowData = dataBase.getColumnNames(jsonDict['TableName'])
+            retMsgDict['Operation'] = jsonDict['Operation']
+            if (status == 'OK'):
+                retMsgDict["Status"] = "200"
+            else:
+                retMsgDict["Status"] = "002"
+            retMsgDict["Data"] = rowData
+
+        elif (jsonDict['Operation'] == "GetTableSize"):
+            status, sizeData = dataBase.getTableSize(jsonDict['TableName'])
+            retMsgDict['Operation'] = jsonDict['Operation']
+            if (status == 'OK'):
+                retMsgDict["Status"] = "200"
+            else:
+                retMsgDict["Status"] = "003"
+            retMsgDict["Data"] = sizeData
+
         elif (jsonDict['Operation'] == "Insert"):
             status = dataBase.insertRow(jsonDict['TableName'], jsonDict['rowData'])
             retMsgDict['Operation'] = jsonDict['Operation']
             if (status):
                 retMsgDict['Status'] = "200"
             else:
-                retMsgDict['Status'] = "002"
+                retMsgDict['Status'] = "004"
             
         elif (jsonDict["Operation"] == "UpdateByIndex"):
             status = dataBase.updateRowByIndex(jsonDict["TableName"], jsonDict["Index"], jsonDict["rowData"])
@@ -293,7 +322,7 @@ class ServerInterface:
             if (status):
                 retMsgDict["Status"] = "200"
             else:
-                retMsgDict["Status"] = "003"
+                retMsgDict["Status"] = "005"
             
         elif (jsonDict["Operation"] == "UpdateByKeyValue"):
             status = dataBase.updateRowByKeyValue(jsonDict["TableName"], jsonDict["Key"], jsonDict["Equals"], jsonDict["rowData"])
@@ -301,24 +330,24 @@ class ServerInterface:
             if (status):
                 retMsgDict["Status"] = "200"
             else:
-                retMsgDict["Status"] = "004"
+                retMsgDict["Status"] = "006"
             
         elif (jsonDict["Operation"] == "GetRowByIndex"):
-            rowData = dataBase.getRowByIndex(jsonDict["TableName"], jsonDict["Index"])
+            status, rowData = dataBase.getRowByIndex(jsonDict["TableName"], jsonDict["Index"])
             retMsgDict["Operation"] = jsonDict["Operation"]
-            if (len(rowData) > 0):
+            if (status == 'OK'):
                 retMsgDict["Status"] = "200"
             else:
-                retMsgDict["Status"] = "005"
+                retMsgDict["Status"] = "007"
             retMsgDict["Data"] = rowData
             
         elif (jsonDict["Operation"] == "GetRowsByKeyValue"):
-            rowData = dataBase.getRowsByKeyValue(jsonDict["TableName"], jsonDict["Key"], jsonDict["Equals"])
+            status, rowData = dataBase.getRowsByKeyValue(jsonDict["TableName"], jsonDict["Key"], jsonDict["Equals"])
             retMsgDict["Operation"] = jsonDict["Operation"]
-            if (len(rowData) > 0):
+            if (status == 'OK'):
                 retMsgDict["Status"] = "200"
             else:
-                retMsgDict["Status"] = "006"
+                retMsgDict["Status"] = "008"
             retMsgDict["Data"] = rowData
             
         elif (jsonDict["Operation"] == "DeleteRowByIndex"):
@@ -327,7 +356,7 @@ class ServerInterface:
             if (status):
                 retMsgDict["Status"] = "200"
             else:
-                retMsgDict["Status"] = "007"
+                retMsgDict["Status"] = "009"
     
         elif (jsonDict["Operation"] == "DeleteRowsByKeyValue"):
             status = dataBase.deleteRowsByKeyValue(jsonDict["TableName"], jsonDict["Key"], jsonDict["Equals"])
@@ -335,7 +364,7 @@ class ServerInterface:
             if (status):
                 retMsgDict["Status"] = "200"
             else:
-                retMsgDict["Status"] = "008"
+                retMsgDict["Status"] = "010"
             
         else:
             retMsgDict["Operation"] = jsonDict["Operation"]
@@ -376,7 +405,7 @@ class ClientInterface:
             
             # receive data from the server and decoding to get the string.
             msgJson = json.loads( s.recv(1024).decode() )
-            msgJson['Status'] = "OK"
+            #msgJson['Status'] = "OK"
         except Exception as error:
             print("ClientInterface.sendRequest() : Failed")
             print("Error : " + str(error))
@@ -390,6 +419,12 @@ class ClientInterface:
         jsonDict['Operation'] = "Create"
         jsonDict['TableName'] = tableName
         jsonDict['ColumnNames'] = columnNames
+        return self.sendRequest(jsonDict)
+
+    def getTableSize(self, tableName: str):
+        jsonDict = {}
+        jsonDict['Operation'] = "GetTableSize"
+        jsonDict['TableName'] = tableName
         return self.sendRequest(jsonDict)
 
     def InsertRow(self, tableName: str, rowData: list):
