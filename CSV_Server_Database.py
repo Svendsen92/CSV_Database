@@ -2,14 +2,14 @@ import pathlib
 import socket
 import time
 import sys
-from CSV_DatabaseLib import Database
-from CSV_DatabaseLib import ServerInterface
+from CSV_DatabaseLib import Database  # type: ignore
+from CSV_DatabaseLib import ServerInterface # type: ignore
 
 
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        # doesn't even have to be reachable
+        # doesn't have to be reachable
         s.connect(('192.255.255.255', 1))
         IP = s.getsockname()[0]
     except:
@@ -31,6 +31,7 @@ def main():
     finally:
         # Get local lan IP
         ip = get_local_ip()
+        #ip = "127.0.0.1"
         print("IP = " + ip)
         print("PORT = " + str(port))
     
@@ -44,17 +45,6 @@ def main():
     database = Database(filePath=filePath) 
 
     while (True):
-    
-        ''' Request message examples
-        reqCreateMsgJson = '{ "Operation":"Create", "TableName":"test1", "ColumnNames":["col1","col2","col3","col4"] }'
-        reqInsertMsgJson = '{ "Operation":"Insert", "TableName":"test1", "rowData":["col1_Data1", "col2_Data2", "col3_Data3","col4_Data4"]}'
-        reqUpdateByIndexMsgJson = '{ "Operation":"UpdateByIndex", "TableName":"test1", "Index":"index", "rowData":["col1_Data1", "col2_Data2", "col3_Data3","col4_Data4"]}'
-        reqUpdateByKeyValueMsgJson = '{ "Operation":"UpdateByKeyValue", "TableName":"test1", "Key":"key", "Equals":"equals", "rowData":["col1_Data1", "col2_Data2", "col3_Data3","col4_Data4"]}'
-        reqGetRowByIndexMsgJson = '{ "Operation":"GetRowByIndex", "TableName":"test1", "Index":"index"}'
-        reqGetRowsByKeyValueMsgJson = '{ "Operation":"GetRowByKeyValue", "TableName":"test1", "Key":"key", "Equals":"equals"}'
-        reqDeleteRowByIndexMsgJson = '{ "Operation":"DeleteRowByIndex", "TableName":"test1", "Index":"index"}'
-        reqDeleteRowsByKeyValueMsgJson = '{ "Operation":"DeleteRowByKeyValue", "TableName":"test1", "Key":"key", "Equals":"equals"}'
-        '''
            
         # Create socket and wait for client connection
         isConnected = interface.createSocket()
